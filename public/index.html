@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="FunBooks">
+<html >
   <head>
     <title>FunBooks</title>
     <title>FunBooks</title>
@@ -7,15 +7,24 @@
     <link rel="stylesheet" href="./stylesheets/style.css">
   </head>
   <body>
-    <div id="app">
+    <div id="app" ng-app="FunBooks">
       <h1>FunBooks</h1>
       <div id='sign'>
         <a href="">sign in</a>
       </div>
-      <home></home>
+      <!-- <home></home> -->
+      <!-- <book-detail></book-detail>   -->
+      
+      <div ng-view>
+      </div>
+     
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script src="./javascripts//components/app.module.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
+    <script src="./javascripts/app.module.js"></script>
     <script src="./javascripts/components/index/home.component.js"></script>
+    <script src="./javascripts/components/index/home.module.js"></script>
+    <script src="./javascripts//components/details/bookDetail.component.js"></script>
+    <script src="./javascripts//components/details/bookDetail.module.js"></script>
   </body>
 </html>

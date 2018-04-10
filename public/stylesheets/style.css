@@ -37,3 +37,15 @@
 #pageFooter input{
   width: 40px;
 }
+
+.detail-body{
+  display: flex;
+  justify-content: space-between;
+}
+.detail-body>div{
+  margin: 0 10%;
+}
+
+.detail-body input{
+  width: 50px;
+}

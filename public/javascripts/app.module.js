@@ -3,7 +3,9 @@
 
     angular
         .module('FunBooks', [
-            
+            'ngRoute',
+            'home',
+            'bookDetail'
         ]);
 
 }());
