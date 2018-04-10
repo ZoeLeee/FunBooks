@@ -1,15 +1,21 @@
 <!doctype html>
-<html ng-app>
+<html ng-app="FunBooks">
   <head>
     <title>FunBooks</title>
+    <title>FunBooks</title>
+    <link rel="stylesheet" href="./stylesheets/reset.css">
+    <link rel="stylesheet" href="./stylesheets/style.css">
   </head>
   <body>
-    <div>
-      <label>FunBooks:</label>
-      <input type="text" ng-model="yourName" placeholder="Enter a name here">
-      <hr>
-      <h1>FunBooks {{yourName}}!</h1>
+    <div id="app">
+      <h1>FunBooks</h1>
+      <div id='sign'>
+        <a href="">sign in</a>
+      </div>
+      <home></home>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="./javascripts//components/app.module.js"></script>
+    <script src="./javascripts/components/index/home.component.js"></script>
   </body>
 </html>

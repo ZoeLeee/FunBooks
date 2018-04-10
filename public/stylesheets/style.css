@@ -1,8 +1,39 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+#app{
+  text-align: center
 }
 
-a {
-  color: #00B7FF;
+#sign{
+  width:20%;
+}
+#books{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#pageLeft{
+  width: 20%;
+}
+#pageRight{
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  height: 780px;
+  overflow: auto;
+}
+#pageRight>li{
+  margin: 10px;
+  width: 20%;
+}
+
+#pageFooter{
+  width:100%;
+  position: absolute;
+  bottom: 0px;
+  height: 100px;
+}
+#pageFooter>div{
+  display: inline-block;
+}
+#pageFooter input{
+  width: 40px;
 }
