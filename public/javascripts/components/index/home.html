@@ -14,7 +14,7 @@
           </ul>
         </div>
         <ul id="pageRight">
-          <li ng-repeat="showBooks in $ctrl.showBooks">
+          <li ng-repeat="showBooks in hm.showBooks">
             <img src="../../../images/cleancode.png" alt="">
             <p>{{showBooks.title}}</p>
             <p>{{showBooks.author}}</p>
@@ -23,12 +23,12 @@
         </ul>
   </div>
   <div id="pageFooter">
-    <a href="javascript:;" ng-click=" $ctrl.togglePage(false)">&lt;Previous Page</a>
+    <a href="javascript:;" ng-click=" hm.togglePage(false)">&lt;Previous Page</a>
     <div>
       <span>page</span>
-      <input type="number" ng-model="$ctrl.page">
+      <input type="number" ng-model="hm.page">
       <span>of {{$ctrl.totalPage}}</span> 
     </div>
-    <a href="javascript:;" ng-click=" $ctrl.togglePage(true)">Next Page&gt;</a>
+    <a href="javascript:;" ng-click=" hm.togglePage(true)">Next Page&gt;</a>
   </div>
 </div>
