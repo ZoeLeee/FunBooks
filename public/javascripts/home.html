@@ -1,0 +1,38 @@
+<div>
+  <div id="books">
+      <div id="pageLeft">
+          <ul>
+            <li>
+              <a href="javascript:;">Computer</a>
+            </li>
+            <li>
+              <a href="javascript:;">History</a>
+            </li>
+            <li>
+              <a href="javascript:;">Literature</a>
+            </li>
+          </ul>
+        </div>
+        <ul id="pageRight">
+          <li ng-repeat="book in hmCtrl.showBooks">
+            <a href="#!/bookdetail">
+              <img ng-src="../{{book.coverImage}}" >
+            </a> 
+            <p>{{book.title}}</p>
+            <p>
+              <span ng-repeat="author in book.authorList">{{author}} </span>
+            </p>
+            <p>${{book.price}}</p>
+          </li>
+        </ul>
+  </div>
+  <div id="pageFooter">
+    <a href="javascript:;" ng-click=" hmCtrl.togglePage(false)">&lt;Previous Page</a>
+    <div>
+      <span>page</span>
+      <input type="number" ng-model="hmCtrl.page">
+      <span>of {{$ctrl.totalPage}}</span> 
+    </div>
+    <a href="javascript:;" ng-click=" hmCtrl.togglePage(true)">Next Page&gt;</a>
+  </div>
+</div>

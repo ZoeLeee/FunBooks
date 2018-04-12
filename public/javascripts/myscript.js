@@ -1,4 +1,23 @@
 angular.module('FunBooks',['ngRoute'])
+.component('bookItem',{
+  template:`
+    <ul class='bookItem'>
+      <li>
+        <img src="../images/cleancode.png">
+      </li>
+      <li>
+        <p>title</p>
+        <p>author</p>
+      </li>
+      <li>
+        <p>$xx</p>
+      </li>
+      <li>
+        <input type='number'>
+      </li>
+    </ul> 
+  `
+})
 .controller('BookDetailController',function() {
     this.book={
       title:"hha",
@@ -10,19 +29,22 @@ angular.module('FunBooks',['ngRoute'])
     }
   }
 )
-.controller('HomeController',function () {
-    this.books=[];
+.controller('HomeController',function ($http) {
+
     this.showBooks=[];
     this.page=1;
-    for(let i=0;i<99;i++){
-      this.books.push({
-        title: 'clean Code '+i,
-         authors: 'Fast',
-         price:'$99'
-       })
-    }
-    this.totalPage=Math.floor(this.books.length/8)+1;      
-    this.showBooks.push(...this.books.slice((this.page-1)*8,8));
+    $http
+      .get("http://localhost:3000/loadpage?category=Computer&page="+this.page)
+      .then(response=> {
+        let status=response.data.success;
+        let data=response.data.data
+        console.log('data: ', data);
+        if(status){
+          this.books=data;
+          this.totalPage=Math.floor(this.books.length/8)+1;      
+          this.showBooks.push(...this.books.slice((this.page-1)*8,8));
+        }else console.log("数据请求失败");
+      });
 
     this.togglePage=(isAdd)=>{
       isAdd?this.page++:this.page--;
@@ -36,13 +58,28 @@ angular.module('FunBooks',['ngRoute'])
     }
   }
 )
-.config(['$routeProvider', function($routeProvider){
+.config(['$routeProvider','$locationProvider', function($routeProvider,$locationProvider){
+  $locationProvider.hashPrefix('!');
     $routeProvider
     .when('/',{
-        templateUrl:"../javascripts/components/index/home.html",
+        templateUrl:"../javascripts/home.html",
         controller: 'HomeController',
-        controllerAs:'hm',
+        controllerAs:'hmCtrl',
     })
-    .when('/book',{templateUrl:"../javascripts/components/details/detail.html",controller: 'BookDetailController'})
+    .when('/bookdetail',{
+      templateUrl:"../javascripts/detail.html",
+      controller: 'BookDetailController',
+      controllerAs:'bdCtrl'
+    })
+    .when('/login',{
+      templateUrl:"../javascripts/login.html",
+      controller: '',
+      controllerAs:''
+    }).
+    when('/cart',{
+      templateUrl:"../javascripts/bookCart.html",
+      controller: '',
+      controllerAs:''
+    })
     .otherwise({redirectTo:'/'});
 }]);

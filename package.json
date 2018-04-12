@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "supervisor app.js"
   },
   "dependencies": {
     "express": "~4.16.0",
-    "morgan": "~1.9.0"
+    "express-session": "^1.15.6",
+    "jade": "^1.11.0",
+    "mongodb": "^2.2.33",
+    "morgan": "~1.9.0",
+    "supervisor": "^0.12.0"
   }
 }

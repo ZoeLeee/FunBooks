@@ -49,3 +49,30 @@
 .detail-body input{
   width: 50px;
 }
+
+#login{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100%;
+  height: 300px;
+}
+#login>p{
+  margin: 30px;
+}
+
+.bookItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.li-inline>li{
+  display: inline-block;
+}
+
+.pull-right{
+  float: right;
+}
