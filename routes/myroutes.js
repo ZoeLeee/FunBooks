@@ -9,8 +9,8 @@ const Urls=`mongodb://localhost:27017/assignment2`;
 
 router.get('/loadpage', function(req, res, next) {
   let page=req.query.page;
-  handleDb(req,res,"bookCollection",{categorty:req.query.categorty},findData,data=>{
-    
+  handleDb(req,res,"bookCollection",{category:req.query.category},findData,data=>{
+    console.log(data);
     res.end(`{"success":true,"data":${JSON.stringify(data)}}`);
   })
 });
@@ -50,20 +50,16 @@ function deletes(db, collections, selector, fn) {
 
 //find
 function findData(db, collections, selector, fn) {
-    //collections="hashtable";
     let collection = db.collection(collections);
-
     collection.find(selector).toArray(function (err, result) {
-        //console.log(docs);
         try {
             assert.equal(err, null);
         } catch (e) {
             console.log(e);
             result = [];
         }
-
-        fn(result);
         db.close();
+        fn(result);
     });
 
 }

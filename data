@@ -1,3 +1,5 @@
-db.bookCollection.insert({'title': 'Convex2', 'category': 'Literature', 'authorList':['Stephen Boyd4'], 'price': 41, 'publisher': 'Cambridge University Press', 'date': 'March 8, 2004', 'coverImage': 'images/book1.jpg', 'description': 'Convex optimization problems arise frequently in many different fields. This book provides a comprehensive introduction to the subject, and shows in detail how such problems can be solved numerically with great efficiency.'})
 
+for(i=0;i<80;i++){
+  db.bookCollection.insert({'title': 'Convex'+i, 'category': 'Computer', 'authorList':['Stephen Boyd4'], 'price': i*2, 'publisher': 'Cambridge University Press', 'date': 'March 8, 200'+i, 'coverImage': 'images/book1.jpg', 'description': 'Convex optimization problems arise frequently in many different fields. This book provides a comprehensive introduction to the subject, and shows in detail how such problems can be solved numerically with great efficiency.'})
+}
 db.userCollection.insert({'name': 'joker', 'password': '123456', 'status': 'offline', 'cart':[{'bookId': '2', 'quantity': 1}, {'bookId': '2', 'quantity': 2}], 'totalnum': 3})

@@ -1,5 +1,7 @@
 #app{
-  text-align: center
+  text-align: center;
+  width: 960px;
+  margin: 0 auto;
 }
 
 #sign{
@@ -12,6 +14,9 @@
 
 #pageLeft{
   width: 20%;
+}
+#pageLeft a:focus{
+  color: blue
 }
 #pageRight{
   width: 80%;
@@ -27,9 +32,7 @@
 
 #pageFooter{
   width:100%;
-  position: absolute;
-  bottom: 0px;
-  height: 100px;
+  height: 80px;
 }
 #pageFooter>div{
   display: inline-block;
@@ -69,10 +72,25 @@
   justify-content: space-between;
 }
 
+.sign>a{
+  color: blue;
+}
+.cart{
+  border: 1px solid blue;
+  padding: 3px 5px;
+}
+.active>a{
+  color: blue;
+}
+
+/*******通用样式**********/
+.flex-space-between{
+  display: flex;
+  justify-content: space-between
+}
 .li-inline>li{
   display: inline-block;
 }
-
-.pull-right{
-  float: right;
+a:hover{
+  text-decoration: none;
 }
