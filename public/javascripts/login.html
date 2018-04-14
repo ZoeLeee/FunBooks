@@ -1,11 +1,12 @@
 <div id="login">
+  <p ng-show="lgCtrl.isFail">登陆失败</p>
   <p>
     <label for="">username:</label>
-    <input type="text">
+    <input type="text" ng-model="lgCtrl.uname">
   </p>
   <p>
       <label for="">password:</label>
-      <input type="password">
+      <input type="password" ng-model="lgCtrl.pwd">
   </p>
-  <button>Sign in</button>
+  <button ng-click="lgCtrl.signto()">Sign in</button>
 </div>

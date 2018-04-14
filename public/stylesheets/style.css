@@ -44,6 +44,7 @@
 .detail-body{
   display: flex;
   justify-content: space-between;
+  height: 480px;
 }
 .detail-body>div{
   margin: 0 10%;
@@ -65,6 +66,20 @@
 }
 #login>p{
   margin: 30px;
+}
+.book-detail>li{
+  margin: 10px;
+}
+.book-detail>li:first-child{
+  font-size: 20px;
+  font-weight: bold
+}
+.book-detail>li:nth-child(3){
+  color: green;
+  font-size: 17px;
+}
+.book-detail>li:last-child{
+  border: 1px solid black;
 }
 
 .bookItem {
@@ -93,4 +108,10 @@
 }
 a:hover{
   text-decoration: none;
+}
+
+.underline,.underline:hover {
+  text-decoration: underline;
+  color: dodgerblue;
+  font-size: 18px;
 }

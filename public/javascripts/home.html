@@ -23,7 +23,7 @@
     </div>
     <ul id="pageRight">
       <li ng-repeat="book in hmCtrl.showBooks">
-        <a href="#!/bookdetail">
+        <a ng-href="#!/bookdetail/:{{book._id+''}}/{{hmCtrl.page}}">
           <img ng-src="../{{book.coverImage}}">
         </a>
         <p>{{book.title}}</p>

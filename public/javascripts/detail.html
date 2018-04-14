@@ -2,14 +2,16 @@
   <sign></sign>
   <div class="detail-body">
     <div>
-      <img src="../../../images/book1.jpg" alt="">
+      <img ng-src="../{{bdCtrl.book.coverImage}}" alt="">
     </div>
-    <ul>
+    <ul class='book-detail'>
       <li>{{bdCtrl.book.title}}</li>
-      <li>{{bdCtrl.book.author}}</li>
-      <li>{{bdCtrl.book.price}}</li>
-      <li>{{bdCtrl.book.publlsher}}</li>
-      <li>{{bdCtrl.book.publishDate}}</li>
+      <li> 
+          <span ng-repeat="author in bdCtrl.book.authorList">{{author}} </span>
+       </li>
+      <li>${{bdCtrl.book.price}}</li>
+      <li>{{bdCtrl.book.publisher}}</li>
+      <li>{{bdCtrl.book.date}}</li>
       <li>{{bdCtrl.book.description}}</li>
     </ul>
     <div>
@@ -20,7 +22,7 @@
       <button>Add to Cart</button>
     </div>
   </div>
-  <div class="detail-footer">
-    <a href="#!/">go back</a>
+  <div class="detail-footer cart" ng-click="bdCtrl.goback()"> 
+    <a >go back</a>
   </div>
 </div>
