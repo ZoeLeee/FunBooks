@@ -32,7 +32,6 @@ angular.module('FunBooks', ['ngRoute'])
   .controller('BookDetailController', function ($routeParams, $http, $location) {
     this.quantity = 1;
     let bookId = $routeParams.bookId;
-    this.currentPage = $routeParams.page;
     $http
       .get(`http://localhost:3000/loadbook/` + bookId)
       .then(res => {
@@ -200,11 +199,11 @@ angular.module('FunBooks', ['ngRoute'])
       console.log('this.totalNum: ', this.totalNum);
       if (this.totalNum) {
         $http.get(`http://localhost:3000/checkout`).then(res => {
-            if(res.status===200){
-              this.loadcart();
-              sessionStorage.totalNum=0;
-              $location.path('/pay/:' + this.totalPrice)
-            }
+          if (res.status === 200) {
+            this.loadcart();
+            sessionStorage.totalNum = 0;
+            $location.path('/pay/:' + this.totalPrice)
+          }
         })
       }
     }
@@ -218,17 +217,103 @@ angular.module('FunBooks', ['ngRoute'])
     $locationProvider.hashPrefix('!');
     $routeProvider
       .when('/', {
-        templateUrl: "../javascripts/home.html",
+        template: `
+          <div>
+          <sign></sign>
+          <div id="books">
+            <div id="pageLeft">
+              <ul>
+                <li>
+                  <a href="javascript:;" ng-click="hmCtrl.loadPage('Computer',1)">Computer</a>
+                </li>
+                <li>
+                  <a href="javascript:;" ng-click="hmCtrl.loadPage('History',1)">History</a>
+                </li>
+                <li>
+                  <a href="javascript:;" ng-click="hmCtrl.loadPage('Literature',1)">Literature</a>
+                </li>
+              </ul>
+            </div>
+            <ul id="pageRight">
+              <li ng-repeat="book in hmCtrl.showBooks">
+                <a ng-href=#!/bookdetail/:{{book._id+''}}>
+                  <img ng-src="../{{book.coverImage}}">
+                </a>
+                <p>{{book.title}}</p>
+                <p>
+                  <span ng-repeat="author in book.authorList">{{author}} </span>
+                </p>
+                <p>$ {{book.price}}</p>
+              </li>
+            </ul>
+          </div>
+          <div id="pageFooter">
+            <a href="javascript:;" ng-click=" hmCtrl.togglePage(false)">&lt;Previous Page</a>
+            <div>
+              <span>page</span>
+              <select ng-model="hmCtrl.page" ng-change="hmCtrl.loadPage(hmCtrl.category,hmCtrl.page)">
+                <option ng-repeat="r in hmCtrl.range" ng-value="r">{{r}}</option>
+              </select>
+              <span>of {{hmCtrl.totalPage}}</span>
+            </div>
+            <a href="javascript:;" ng-click=" hmCtrl.togglePage(true)">Next Page&gt;</a>
+          </div>
+        </div>`,
         controller: 'HomeController',
         controllerAs: 'hmCtrl',
       })
-      .when('/bookdetail/:bookId/:page', {
-        templateUrl: "../javascripts/detail.html",
+      .when('/bookdetail/:bookId', {
+        template: `
+          <div id="detail">
+          <sign></sign>
+          <div class="detail-body">
+            <div>
+              <img ng-src="../{{bdCtrl.book.coverImage}}" alt="">
+            </div>
+            <ul class='book-detail' ng-hide="bdCtrl.isAdd">
+              <li>{{bdCtrl.book.title}}</li>
+              <li> 
+                  <span ng-repeat="author in bdCtrl.book.authorList">{{author}} </span>
+              </li>
+              <li>$ {{bdCtrl.book.price}}</li>
+              <li>{{bdCtrl.book.publisher}}</li>
+              <li>{{bdCtrl.book.date}}</li>
+              <li>{{bdCtrl.book.description}}</li>
+            </ul>
+            <div ng-hide="bdCtrl.isAdd">
+              <p>
+                <span>Quantity:</span>
+                <input type="number" ng-model="bdCtrl.quantity">
+              </p>
+              <button ng-click="bdCtrl.addToCart(bdCtrl.book._id)">Add to Cart</button>
+            </div>
+            <div ng-show="bdCtrl.isAdd" class="isAdd">
+              <h3>Add To Cart</h3>
+              <h4>Cart subtotal ({{bdCtrl.totalNum}}item(s)):$ {{bdCtrl.totalPrice}}</h4>
+            </div>
+          </div>
+          <div class="detail-footer cart"> 
+            <a href="" ng-hide="bdCtrl.isAdd"  ng-click="bdCtrl.goback()">go back</a>
+            <a href='#!/' ng-show="bdCtrl.isAdd" >continue browsing</a>
+          </div>
+        </div>`,
         controller: 'BookDetailController',
         controllerAs: 'bdCtrl'
       })
       .when('/login', {
-        templateUrl: "../javascripts/login.html",
+        template: `
+          <div id="login">
+          <p ng-show="lgCtrl.isFail">登陆失败</p>
+          <p>
+            <label for="">username:</label>
+            <input type="text" ng-model="lgCtrl.uname">
+          </p>
+          <p>
+              <label for="">password:</label>
+              <input type="password" ng-model="lgCtrl.pwd">
+          </p>
+          <button ng-click="lgCtrl.signto()">Sign in</button>
+        </div>`,
         controller: 'LoginController',
         controllerAs: 'lgCtrl'
       }).
@@ -244,7 +329,41 @@ angular.module('FunBooks', ['ngRoute'])
         controllerAs: 'outCtrl'
       }).
       when('/cart', {
-        templateUrl: "../javascripts/bookCart.html",
+        template: `
+            <div>
+            <sign></sign>
+            <h2>shopping cart</h2>
+            <ul class='li-inline cart-title'>
+              <li>price</li>
+              <li>quantity</li>
+            </ul>
+            <div class='cart-body'>
+              <ul ng-repeat="book in cartCtrl.cart"  class='bookItem'>
+                <li>
+                  <img ng-src="../{{book.coverImage}}">
+                </li>
+                <li>
+                  <p>{{book.title}}</p>
+                  <p>
+                    <span ng-repeat="author in book.authorList">{{author}} </span>
+                  </p>
+                </li>
+                <li>
+                  <p>$ {{ book.price }}</p>
+                </li>
+                <li>
+                  <input type='number' ng-model="book.quantity" ng-change="cartCtrl.updateCart(book._id,book.quantity)">
+              </ul>
+            </div>
+          
+            <div>
+              <h2>Cart subtotal({{cartCtrl.totalNum}} item) <span>$ {{ cartCtrl.totalPrice }}</span></h2>
+            
+            </div>
+            <div>
+              <button ng-click="cartCtrl.toPay()">Proceed to check out</button>
+            </div>
+          </div>`,
         controller: 'CartController',
         controllerAs: 'cartCtrl'
       }).
