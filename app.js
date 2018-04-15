@@ -10,7 +10,7 @@ var indexRouter = require('./routes/myroutes');
 
 var app = express();
 app.all('*',(req,res,next)=>{
-  // res.header("Access-Control-Allow-Origin","http://localhost:3000");
+  res.header("Access-Control-Allow-Origin","http://localhost:3000");
   res.header('Access-Control-Allow-Methods','PUT,GET,POST,DELETE,OPTIONS');
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   res.header('Access-Control-Allow-Headers','Content-Type');
@@ -23,8 +23,8 @@ app.use(session({
   secret:'funbook',
   name:'funbook',
   cookie:{maxAge:60*1000*60*24},
-  resave:false,
-  saveUninitialized:true
+  resave:true,
+  saveUninitialized:false
 }))
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -9,3 +9,18 @@ for(i=0;i<80;i++){
 for(i=0;i<10;i++){
   db.userCollection.insert({'name': 'joker'+i, 'password': '123456', 'status': 'offline', 'cart':[{'bookId': '5acf4eb4c11c67e98f6e868f', 'quantity': i}, {'bookId': '5acf4f56c11c67e98f6e86a1', 'quantity': i-1}], 'totalnum': i*2-1})
 }
+
+use assignment2
+
+db.userCollection.find({_id:ObjectId("5ad189b3b98736adbaf6a402")});
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402")},{$addToSet:{cart:{bookID:2,quantity:2}}});
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402")},{$inc:{totalnum:2}});
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402")},{$addToSet:{cart:{bookID:3,quantity:3}},$inc:{totalnum:3}});
+
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402"),cart:{$elemMatch:{bookID:3}}},{$set:{'cart.$.quantity':10}});
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402"),cart:{$elemMatch:{bookID:ObjectId("5ad0b97c41b179e46ca4e618")}}},{$inc:{'cart.$.quantity':10,totalnum:10}});
+
+db.userCollection.update({_id:ObjectId("5ad189b3b98736adbaf6a402")},{$pull:{cart:{bookID:2}}});
+
+5ad189b4b98736adbaf6a403
+db.userCollection.update({_id:ObjectId("5ad189b4b98736adbaf6a403")},{$set:{cart:[]}});

@@ -4,7 +4,7 @@
     <div>
       <img ng-src="../{{bdCtrl.book.coverImage}}" alt="">
     </div>
-    <ul class='book-detail'>
+    <ul class='book-detail' ng-hide="bdCtrl.isAdd">
       <li>{{bdCtrl.book.title}}</li>
       <li> 
           <span ng-repeat="author in bdCtrl.book.authorList">{{author}} </span>
@@ -14,15 +14,20 @@
       <li>{{bdCtrl.book.date}}</li>
       <li>{{bdCtrl.book.description}}</li>
     </ul>
-    <div>
+    <div ng-hide="bdCtrl.isAdd">
       <p>
-        <span>Quantily:</span>
-        <input type="number">
+        <span>Quantity:</span>
+        <input type="number" ng-model="bdCtrl.quantity">
       </p>
-      <button>Add to Cart</button>
+      <button ng-click="bdCtrl.addToCart(bdCtrl.book._id)">Add to Cart</button>
+    </div>
+    <div ng-show="bdCtrl.isAdd" class="isAdd">
+      <h3>Add To Cart</h3>
+      <h4>Cart subtotal ({{bdCtrl.totalNum}}item(s)):${{bdCtrl.totalPrice}}</h4>
     </div>
   </div>
-  <div class="detail-footer cart" ng-click="bdCtrl.goback()"> 
-    <a >go back</a>
+  <div class="detail-footer cart"> 
+    <button href="" ng-hide="bdCtrl.isAdd"  ng-click="bdCtrl.goback()">go back</button>
+    <button href="#!/" ng-show="bdCtrl.isAdd" >continue browsing</button>
   </div>
 </div>

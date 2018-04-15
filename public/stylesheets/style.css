@@ -44,7 +44,7 @@
 .detail-body{
   display: flex;
   justify-content: space-between;
-  height: 480px;
+  height: 680px;
 }
 .detail-body>div{
   margin: 0 10%;
@@ -85,14 +85,34 @@
 .bookItem {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 30px;
 }
-
+.bookItem input{
+  width:30%;
+}
+.bookItem>li{
+  width: 25%;
+}
 .sign>a{
   color: blue;
 }
 .cart{
   border: 1px solid blue;
   padding: 3px 5px;
+}
+.cart-body{
+  height: 680px;
+}
+.cart-title{
+  margin: 20px;
+  text-align: right;
+}
+.cart-title>li{
+  width: 25%;
+  margin-right: 5%;
+}
+.isAdd{
+  margin: 100px auto;
 }
 .active>a{
   color: blue;

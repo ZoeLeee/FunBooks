@@ -1,9 +1,12 @@
+
 const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = require('url');
-const ObjectID=require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
+const Promisify = require('util').promisify;
+
 // 数据连接数据
 const Urls = `mongodb://localhost:27017/assignment2`;
 
@@ -15,42 +18,160 @@ router.get('/loadpage', function (req, res, next) {
     })
 });
 
-router.get('/loadbook/:bookId',function(req,res,next){
-    let bookId=req.params.bookId.slice(1);
-    handleDb("bookCollection", {_id:new ObjectID(bookId)}, find, data=>{
+router.get('/loadbook/:bookId', function (req, res, next) {
+    let bookId = req.params.bookId.slice(1);
+    handleDb("bookCollection", { _id: new ObjectID(bookId) }, find, data => {
         res.end(JSON.stringify(data));
     })
 
 })
 
-router.post('/signin',function(req,res,next){
-    let name=req.body.name;
-    let password=req.body.pwd;
-    handleDb("userCollection", {name,password}, find, data=>{
-        if(data.data.length){
-            data.msg="登陆成功";
-            handleDb("userCollection", [{name,password},{$set:{"status":"Online"}}], update, res=>{
-                console.log(res);
+router.post('/signin', function (req, res, next) {
+    let name = req.body.name;
+    let password = req.body.pwd;
+    handleDb("userCollection", { name, password }, find, data => {
+        if (data.data.length) {
+            data.msg = "登陆成功";
+            handleDb("userCollection", [{ name, password }, { $set: { "status": "Online" } }], update, res => {
+                console.log("res", res);
             })
-            req.session.userId=data.data[0]._id;
+            req.session.userId = data.data[0]._id;
             res.end(JSON.stringify(data));
-        }else{
-            data.msg="登陆失败";
+        } else {
+            data.msg = "登陆失败";
             res.end(JSON.stringify(data));
         }
     })
-
 })
 
-router.get('/signout',function(req,res,next){
-    if(req.session.userId){
-        handleDb("userCollection", [{_id:new ObjectID(req.session.userId)},{$set:{"status":"Offline"}}], update, data=>{
-            console.log(data);
-            res.end(JSON.stringify(data));
+router.get('/signout', function (req, res, next) {
+    handleDb("userCollection", [{ _id: new ObjectID(req.session.userId) }, { $set: { "status": "Offline" } }], update, data => {
+        req.session.userId = null;
+        res.end(JSON.stringify(data));
+    })
+})
+
+router.put('/addtocart', function (req, res, next) {
+    console.log(req.session.userId);
+    if (req.session.userId) {
+        let bookId = req.body.bookId;
+        let quantity = req.body.quantity;
+        req.session.userId = req.session.userId;
+        handleDb("userCollection", [{ _id: new ObjectID(req.session.userId), cart: { $elemMatch: { bookID: new ObjectID(bookId) } } }, { $inc: { 'cart.$.quantity': quantity, totalnum: quantity } }], update, data => {
+            console.log('data : ', data);
+            if (data.length) {
+                console.log("添加成功,更新数量");
+                handleDb("userCollection", { _id: new ObjectID(req.session.userId) }, find, userdata => {
+                    let user = userdata.data[0];
+                    let totalnum = user.totalnum;
+                    let bookIds = getBookIds(user.cart);
+                    let totalPrice = 0;
+                    handleDb("bookCollection", { _id: { $in: bookIds } }, find, result => {
+                        console.log(result);
+                        for (let obj of result.data) {
+                            for (let c of user.cart) {
+                                if (obj._id.equals(c.bookID)) {
+                                    totalPrice += obj.price * c.quantity
+                                }
+                            }
+                        }
+                        console.log(`{"totalNum":${totalnum},"totalPrice":${totalPrice}}`);
+                        res.end(`{"totalNum":${totalnum},"totalPrice":${totalPrice}}`);
+                    })
+                })
+            } else {
+                handleDb("userCollection", [{ _id: new ObjectID(req.session.userId) }, { $addToSet: { cart: { bookID: new ObjectID(bookId), quantity: quantity } }, $inc: { totalnum: quantity } }], update, result => {
+                    console.log("添加成功,新增商品");
+                    handleDb("userCollection", { _id: new ObjectID(req.session.userId) }, find, userdata => {
+                        let user = userdata.data[0];
+                        let totalnum = user.totalnum;
+                        let bookIds = getBookIds(user.cart);
+                        let totalPrice = 0;
+                        handleDb("bookCollection", { _id: { $in: bookIds } }, find, result => {
+                            console.log(result);
+                            for (let obj of result.data) {
+                                for (let c of user.cart) {
+                                    if (obj._id.equals(c.bookID)) {
+                                        totalPrice += obj.price * c.quantity
+                                    }
+                                }
+                            }
+                            res.end(`{"totalNum":${totalnum},"totalPrice":${totalPrice}}`);
+                        })
+                    })
+                })
+            }
         })
     }
-    req.session.userId="";
 })
+
+router.put('/updatecart', function (req, res, next) {
+    if (req.session.userId) {
+        let bookId = req.body.bookId;
+        let quantity = req.body.quantity;
+        let totalNum = req.body.totalNum;
+        console.log('quantity: ', quantity);
+        req.session.userId = req.session.userId;
+        handleDb("userCollection", [{ _id: new ObjectID(req.session.userId), cart: { $elemMatch: { bookID: new ObjectID(bookId) } } }, { $set: { 'cart.$.quantity': quantity, totalnum: totalNum } }], update, data => {
+            res.end(`{"totalNum":${totalNum}}`);
+        })
+    }
+})
+router.delete('/deletefromcart/:bookId', function (req, res, next) {
+    if (req.session.userId) {
+        let bookId = req.params.bookId.slice(1);
+        req.session.userId = req.session.userId;
+        handleDb("userCollection", [{ _id: new ObjectID(req.session.userId) }, { $pull: { cart: { bookID: new ObjectID(bookId) } } }], update, data => {
+            handleDb("userCollection", { _id: new ObjectID(req.session.userId) }, find, userdata => {
+                let user = userdata.data[0];
+                let totalnum = user.totalnum;
+                res.end(`{"totalNum":${totalnum}}`);
+            })
+        })
+    }
+})
+router.get('/loadcart', async function (req, res, next) {
+    console.log(req.session.userId);
+    if (req.session.userId) {
+        req.session.userId = req.session.userId;
+        let bookId = req.session.userId;
+        console.log('bookId: ', bookId);
+        handleDb("userCollection", { _id: new ObjectID(bookId) }, find, data => {
+            let user = data.data[0];
+            if (user) {
+                let bookIds = getBookIds(user.cart);
+                handleDb("bookCollection", { _id: { $in: bookIds } }, find, result => {
+                    for (let obj of result.data) {
+                        for (let c of user.cart) {
+                            if (obj._id.equals(c.bookID)) {
+                                obj.quantity = c.quantity;
+                            }
+                        }
+                    }
+                    res.end(JSON.stringify(result.data));
+                })
+            }
+        })
+    }
+})
+router.get('/checkout', async function (req, res, next) {
+    if (req.session.userId) {
+        req.session.userId = req.session.userId;
+        handleDb("userCollection", [{ _id: new ObjectID(req.session.userId)}, { $set: { cart:[],totalnum:0 } }], update, data => {
+            if(data.length)
+                res.end(`{"msg":''`);
+            else
+                res.end(`{"msg":'失败'`);
+        })
+    }
+})
+function getBookIds(arrs) {
+    let bookIds = [];
+    for (let obj of arrs) {
+        bookIds.push(obj.bookID);
+    }
+    return bookIds;
+}
 /************数据库操作函数*************/
 //add一条数据 
 function add(db, collections, selector, fn) {
@@ -92,19 +213,20 @@ function find(db, collections, selector, fn) {
         try {
             assert.equal(err, null);
             fn({
-                success:true,
-                data:result
+                success: true,
+                data: result
             });
         } catch (e) {
             console.log(e);
             fn({
-                success:false,
-                data:[]
+                success: false,
+                data: []
             });
         }
+        db.close();
     });
-
 }
+
 //update
 function update(db, collections, selector, fn) {
     let collection = db.collection(collections);
@@ -125,7 +247,7 @@ function update(db, collections, selector, fn) {
 
 
 
-function handleDb(collections, selector, handleFun, fn) {
+async function handleDb(collections, selector, handleFun, fn) {
     MongoClient.connect(Urls, function (err, db) {
         assert.equal(null, err);
         console.log("Connected correctly to server");
@@ -165,7 +287,7 @@ function findByPagination(collections, selector, page, count, fn) {
                     totalCount: totalCount
                 });
             }
-            
+
         });
         db.close();
     });
