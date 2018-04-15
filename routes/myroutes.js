@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
@@ -6,7 +5,6 @@ const assert = require('assert');
 const url = require('url');
 const ObjectID = require('mongodb').ObjectID;
 const Promisify = require('util').promisify;
-
 // 数据连接数据
 const Urls = `mongodb://localhost:27017/assignment2`;
 
@@ -173,38 +171,6 @@ function getBookIds(arrs) {
     return bookIds;
 }
 /************数据库操作函数*************/
-//add一条数据 
-function add(db, collections, selector, fn) {
-    let collection = db.collection(collections);
-    collection.insertMany([selector], function (err, result) {
-        try {
-            assert.equal(err, null)
-        } catch (e) {
-            console.log(e);
-            result = [];
-        };
-
-        fn(result);
-        db.close();
-    });
-};
-
-//delete
-function deletes(db, collections, selector, fn) {
-    let collection = db.collection(collections);
-    collection.deleteOne(selector, function (err, result) {
-        try {
-            assert.equal(err, null);
-            assert.notStrictEqual(0, result.result.n);
-        } catch (e) {
-            console.log(e);
-            result.result = "";
-        };
-
-        fn(result.result ? [result.result] : []); //如果没报错且返回数据不是0，那么表示操作成功。
-        db.close;
-    });
-};
 
 //find
 function find(db, collections, selector, fn) {
@@ -246,8 +212,7 @@ function update(db, collections, selector, fn) {
 }
 
 
-
-async function handleDb(collections, selector, handleFun, fn) {
+function handleDb(collections, selector, handleFun, fn) {
     MongoClient.connect(Urls, function (err, db) {
         assert.equal(null, err);
         console.log("Connected correctly to server");
